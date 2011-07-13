@@ -124,15 +124,15 @@ $.extend( proto, {
 				this.active.children( "a" ).children( "input[type='checkbox']" ).removeAttr( "checked" );
 			}
 		}
-		//TODO: switch ui-icon-radio's when fixed in master
+
 		if( this.active.children( "a" ).children().is( "input[type='radio']" ) ) {
 			if( this.active.attr( "aria-checked" ) === "false" ) {
-				this.active.children( "a" ).children( "span.ui-icon-radio-on" ).toggleClass( "ui-icon-radio-off ui-icon-radio-on" );
+				this.active.children( "a" ).children( "span.ui-icon-radio-off" ).toggleClass( "ui-icon-radio-on ui-icon-radio-off" );
 				this.active.attr( "aria-checked", "true" );
 				this.active.children( "a" ).children( "input[type='radio']" ).attr( "checked", "checked" );
 				this.active.siblings( "[radio-group=" + $( this.active ).attr( "radio-group" ) + "]" ).each( function() {
 					$( this ).attr( "aria-checked", "false" );
-					$( this ).children( "a" ).children( "span.ui-icon-radio-off" ).toggleClass( "ui-icon-radio-on ui-icon-radio-off" );
+					$( this ).children( "a" ).children( "span.ui-icon-radio-on" ).toggleClass( "ui-icon-radio-on ui-icon-radio-off" );
 					$( this ).children( "a" ).children( "input[type='radio']" ).removeAttr( "checked" );
 				});
 			}
