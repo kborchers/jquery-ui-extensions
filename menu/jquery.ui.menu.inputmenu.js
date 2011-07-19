@@ -138,7 +138,7 @@ $.extend( proto, {
 			}
 		}
 		
-		if( !this.active.children( "a" ).children().is( "input[type='checkbox'], input[type='radio']" ) ) this.closeAll();
+		if( !this.active.children( "a" ).children().is( "input[type='checkbox'], input[type='radio']" ) ) this.collapseAll();
 		this._trigger( "select", event, ui );
 	}
 });
