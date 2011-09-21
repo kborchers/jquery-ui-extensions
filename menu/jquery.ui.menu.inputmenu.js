@@ -17,11 +17,11 @@ $.extend( proto, {
 		var that = this;
 		var items = this.element.find( "li.ui-menu-item" );
 		var inputGroupLabeled = false;
-		
+
 		this.element.bind( "click.menu", function( event ) {
 			if( !new RegExp(/^a$/i).test(event.target.tagName) ) event.preventDefault();
 		});
-		
+
 		var inputIDCount = 0;
 		this.element.find( "input[type='checkbox'], input[type='radio']" ).each( function() {
 			var labelElement = $( this ).closest( "label" );
@@ -35,13 +35,23 @@ $.extend( proto, {
 				labelElement.attr( "for", $( this ).attr( "id" ) );
 			}
 		});
+		this.element.bind( "menufocus", function( event ) {
+			var textInput = $( event.target ).find( "a.ui-state-focus" ).children( "input[type='text']" );
+			if ( textInput.length )
+				textInput[0].focus();
+		})
+		.bind( "menublur", function( event ) {
+			var textInput = $( event.target ).find( "input[type='text']:focus" );
+			if ( textInput.length )
+				textInput[0].blur();
+		});
 
 		items.children( "a" ).each( function( index, item ) {
 			var current = $( item ), parent = current.parent();
-			
+
 			if( current.children().is( "input[type='checkbox'], input[type='radio']" ) ) {
 				current.closest( "ul" ).addClass( "ui-menu-icons" );
-				
+
 				if( current.children( "input[type='checkbox']" ).is( ":checked" ) ) {
 					current.prepend( '<span class="ui-icon ui-icon-check"></span>' );
 					parent.attr({
@@ -66,7 +76,7 @@ $.extend( proto, {
 						"aria-checked": "false"
 					});
 				}
-				
+
 				if( current.children().is( "input[type='radio']" ) ) {
 					parent.attr( "radio-group", current.children( "input[type='radio']" ).attr( "name" ) );
 				}
@@ -84,7 +94,7 @@ $.extend( proto, {
 				else if( parent.prev().length && !parent.prev().children( "a" ).children().is( "input[type='checkbox'], input[type='radio']" ) ) {
 					parent.before( "<li><hr /></li>" );
 				}
-				
+
 				if( inputGroupLabeled && parent.next().length && !parent.next().children( "a" ).children().is( "input[type='checkbox'], input[type='radio']" ) ) {
 					parent.after( "<li><hr /></li>" );
 					inputGroupLabeled = false;
@@ -96,7 +106,7 @@ $.extend( proto, {
 				current.children( "input[type='checkbox'], input[type='radio']" ).hide();
 			}
 		});
-		
+
 		items.bind( "keydown.menu", function( event ) {
 			if( event.keyCode === $.ui.keyCode.SPACE ) {
 				if ( that.active.children( "a" ).children().is( "input[type='checkbox'], input[type='radio']" ) ) {
@@ -105,6 +115,23 @@ $.extend( proto, {
 				}
 				event.preventDefault();
 			}
+		});
+		
+		items.find( "input[type='text']" ).bind( "keydown", function( event ) {
+			event.stopPropagation();
+			if( event.keyCode === $.ui.keyCode.UP ) {
+				that.element.trigger( "focus" );
+				this.blur();
+				that.focus( event, $( this ).closest( ".ui-menu-item").prev() );
+			}
+			if( event.keyCode === $.ui.keyCode.DOWN ) {
+				that.element.trigger( "focus" );
+				this.blur();
+				that.focus( event, $( this ).closest( ".ui-menu-item").next() );
+			}
+		})
+		.bind( "click", function( event ) {
+			event.stopPropagation();
 		});
 	},
 	select: function( event ) {
@@ -137,7 +164,7 @@ $.extend( proto, {
 				});
 			}
 		}
-		
+
 		if( !this.active.children( "a" ).children().is( "input[type='checkbox'], input[type='radio']" ) ) this.collapseAll();
 		this._trigger( "select", event, ui );
 	}
